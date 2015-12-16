@@ -1,18 +1,6 @@
 
-var headers = {
-  "access-control-allow-origin": "*",
-  "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "access-control-allow-headers": "content-type, accept",
-  "access-control-max-age": 10, // Seconds.
-  'Content-Type': "application/json"
-};
+var responsefile = require ('./responsefile')
 
-var sendResponse = function(response, data, statusCode){
-  //the outgoing status
-    statusCode = statusCode || 200;
-    response.writeHead(statusCode, headers);
-    response.end(JSON.stringify(data));
-};
 var counter = 0;
 var messages = [{
   text: "Hello World",
@@ -20,44 +8,24 @@ var messages = [{
   objectId: counter
 }];
 
-var postMethod = function(request, callback){
-  var data = "";
-  request.on('data', function(dataParts){
-    data += dataParts;
-  });
-  request.on('end', function(){
-    console.log(data)
-    callback(JSON.parse(data));
-    // callback(data)
-    // parse to turn it into an object
-  });
-  //request.on that listens to data that is being sent from the client
-  // as it's getting aggregate the data
-  // on end it should parse data and returns it to client.
-
-};
-
 module.exports = function(request, response) {
   console.log("Serving request type " + request.method + " for url " + request.url);
 
   if (request.method === 'GET'){
-    sendResponse(response, {results: messages})
+    responsefile.sendResponse(response, {results: messages});
   } else if (request.method === 'POST'){
-      postMethod(request, function(message){
+      responsefile.postMethod(request, function(message){
         messages.push(message);
         message.objectId = counter++;
-        // message.objectId++;
-        // message.objectId = message.objectId + 1;
-        // message.objectId = counter
-      sendResponse(response, {objectId: counter});
-      // Length - 1?   
-      
+      responsefile.sendResponse(response, {objectId: counter}, 201);
       });
     // Here we want to push into results
     // we can add object to messages
   } else if (request.method === 'OPTIONS'){
-    sendResponse(response,null);
-  }
+    responsefile.sendResponse(response,null);
+  } else {
+    responsefile.sendResponse(response,JSON.stringify("this is an error"),404);
+  } 
 };
 
 

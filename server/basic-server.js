@@ -1,6 +1,11 @@
 /* Import node's http module: */
 var http = require("http");
 var handleRequest = require("./request-handler");
+// gives us access to var path = url.parse(request.url);
+ // path.
+var url = require('url');
+var responsefile = require ('./responsefile');
+
 
 // Every server needs to listen on a port with a unique number. The
 // standard port for HTTP servers is port 80, but that port is
@@ -21,7 +26,32 @@ var ip = "127.0.0.1";
 // incoming requests.
 //
 // After creating the server, we will tell it to listen on the given port and IP. */
-var server = http.createServer(handleRequest);
+
+var routes = {
+  '/classes/messages': handleRequest
+}
+
+var server = http.createServer(function(request,response){
+  var urlPart = url.parse(request.url);
+  if (urlPart.pathname in routes){
+    handleRequest(request,response);
+  }
+  else{
+    responsefile.sendResponse(response,'',404);
+  }
+    
+});
+
+/*
+else {
+  sendResponse(404)
+}
+*/
+// if url.pathname === '/classes/chart' 
+  //=> handle request
+  //handleRequest(request, response);
+// else sendResponse(reponse,"not found", 404);
+
 console.log("Listening on http://" + ip + ":" + port);
 server.listen(port, ip);
 
@@ -37,6 +67,3 @@ server.listen(port, ip);
 // server.listen() will continue running as long as there is the
 // possibility of serving more requests. To stop your server, hit
 // Ctrl-C on the command line.
-
-// Testing
-// Hello how are you
