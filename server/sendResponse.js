@@ -26,15 +26,5 @@ exports.postMethod = function(request, callback){
   //request.on that listens to data that is being sent from the client
   // as it's getting aggregate the data
   // on end it should parse data and returns it to client.
-};
 
-exports.makeActionHandler = function(actionMap){
-  return function(request, response) {
-    var action = actionMap[request.method];
-    if (action) {
-      action(request, response);
-    } else {
-      exports.sendResponse(response, '', 404);
-    }
-  }
-  };
+};

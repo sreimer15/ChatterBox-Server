@@ -28,7 +28,7 @@ var ip = "127.0.0.1";
 // After creating the server, we will tell it to listen on the given port and IP. */
 
 var routes = {
-  '/classes/messages': handleRequest
+  '/classes/messages': handleRequest.requestHandler
 }
 
 var server = http.createServer(function(request,response){
